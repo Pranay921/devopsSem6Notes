@@ -1,0 +1,127 @@
+Docker Networking ->
+Docker provides different network drivers to control how containers communicate.
+ 
+A. Bridge Network (Default)
+- Default network when you run a container.
+- Containers on same bridge can communicate via IP.
+- Best for standalone containers on single host.
+
+B. Host Network
+- Container shares host’s networking stack.
+- No separate IP.
+- Faster performance.
+- Linux only.
+
+docker run -d --network host nginx
+curl http://localhost
+
+C. Overlay Network
+- Used in Docker Swarm.
+- Connects containers across multiple hosts.
+
+# Initialize swarm
+docker swarm init
+
+# Create overlay network
+docker network create -d overlay my_overlay
+
+# Deploy service using overlay
+docker service create --name web --network my_overlay -p 8080:80 nginx
+
+DNS Inside Docker
+- Docker has built-in DNS.
+- Containers resolve each other by container name (if same custom network).
+- Works only in user-defined bridge networks.
+
+- docker network create app_net
+- docker run -d --name backend --network app_net nginx
+- docker run -it --name client --network app_net alpine sh
+- ping backend
+
+Linking Containers (Legacy)
+- Before custom networks, Docker used --link.
+- Deprecated method. Use networks instead.
+
+docker run -d --name db nginx
+docker run -it --name app --link db:database alpine sh
+
+-------------------------------------------------------------------
+
+# Create volume
+docker volume create my_volume
+
+# List volumes
+docker volume ls
+
+# Run container with volume
+docker run -d \
+  --name my_nginx \
+  -v my_volume:/usr/share/nginx/html \
+  nginx
+
+# docker volume inspect my_volume
+
+# docker volume rm my_volume
+
+Bind Mounts ->
+- Mounts host directory into container
+- Useful for development
+
+docker run -d \
+  -v $(pwd)/html:/usr/share/nginx/html \
+  -p 8080:80 \
+  nginx
+
+Backing Data on Host ->
+- docker volume create mysql_data
+- docker run -d  --name mysql_db -e MYSQL_ROOT_PASSWORD=root -v mysql_data:/var/lib/mysql mysql
+- docker rm -f mysql_db
+
+Copy-On-Write (CoW) Mechanism ->
+- Docker images use layered filesystem.
+- Base image layer (read-only)
+- Each new layer = read-only
+- Container layer = writable
+- When file changes → copied to writable layer
+
+docker history nginx
+docker info | grep "Storage Driver"
+
+DOCKER REGISTRIES --->
+Registry = place to store images.
+
+1. Docker Hub--Official public registry 
+- docker login
+- docker tag nginx username/myimage:latest
+- docker push username/myimage:latest
+
+2. GitHub Container Registry (GHCR)
+- Registry provided by GitHub.
+- echo YOUR_GITHUB_TOKEN | docker login ghcr.io -u - USERNAME --password-stdin
+- docker tag nginx ghcr.io/username/myimage:latest
+- docker push ghcr.io/username/myimage:latest
+
+3. Private Registry - run your own registry
+- docker run -d -p 5000:5000 --name registry registry:2
+- docker tag nginx localhost:5000/myimage
+- docker push localhost:5000/myimage
+
+Authentication & Access Tokens ->
+- Instead of password, use Access Tokens.
+
+Docker Hub Token
+- Generate token from Docker Hub settings.
+Login:
+- docker login -u username
+
+-------------------------------------------------------------------------
+
+COMPLETE EXAMPLE ->
+- docker network create app_bridge    
+- docker network ls
+- docker volume create mysql_data
+- docker volume inspect mysql_data
+- docker run -d --name mysql_db --network app_bridge -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=myapp -v mysql_data:/var/lib/mysql mysql:8
+- docker run -d  --name backend_app --network app_bridge -e DB_HOST=mysql_db node:18-alpine sh -c "apk add curl && sleep 300"
+- docker exec -it backend_app ping mysql_db
+- docker run -d --name frontend --network app_bridge -p 8080:80 nginx

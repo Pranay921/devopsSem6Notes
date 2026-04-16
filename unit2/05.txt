@@ -1,0 +1,49 @@
+Commands for CI with Host ->
+
+- docker exec -it Container ID ls /
+- docker exec -it Container ID /bin/bash
+- mkdir /data
+- echo "Hello Docker" > /data/test.txt
+- exit
+- docker attach Container ID 
+- docker cp Container ID:/data/test.txt C:\Users\HP\Desktop\
+- docker cp C:\Users\HP\Desktop\test.txt Container ID :/data/sample.txt
+- docker exec -it Container ID ls /data
+- docker exec -it Container ID cat /data/sample.txt
+
+
+--------------------------------------------------------------------------
+
+Task 
+- Inside this same running container, you are required to:
+- Create a new directory named /project.
+- Inside /project, create a file called report.txt.
+- Add the following text inside the file:
+    This is our container interaction with our host machine.
+- Verify the file content.
+- Copy report.txt from the container to your Desktop.
+- Create another file named notes.txt in the same /project directory.
+- Append the text:
+- Verify that both files exist inside /project.
+
+Commands
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 mkdir /project
+
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 sh -c "echo 'Docker Lab Assignment' > /project/report.txt"
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 sh -c "echo 'Container File Creation Test' >> /project/report.txt"
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 cat /project/report.txt
+
+docker cp 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224:/project/report.txt C:\Users\HP\Desktop\
+
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 sh -c "echo 'This is an additional file inside the same container.' > /project/notes.txt"
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 ls /project
+docker exec -it 63de1b6c3391d6a4687e00e375ca9cfe4685e959c2b774deb8f99187beaf3224 cat /project/notes.txt
+
+Practice Questions ->
+1. You need to start a new container using the nginx image while setting an environment variable ENV_MODE=production. Write the docker run command to achieve this.
+
+2. You have a running container named my_app, but it's not behaving as expected. You want to check its logs to debug any errors. Write the command to view its logs and follow new log entries in real-time.
+
+3. A container named web_server was stopped. Write the command to:
+    a. Start the container again.
+    b. Stop the container when needed.

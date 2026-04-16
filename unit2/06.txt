@@ -1,0 +1,101 @@
+Work on Volumes ->
+Basic commands used to create,inpect,verify , delete/remove the volumes
+
+- docker volume create <volume name>
+- docker volume ls
+- docker volume inspect mydata
+- docker run -d -v <volumename>:<path where to store in image>  --name <containername> <imagename>
+
+- docker volume create mydata
+- docker volume ls
+- docker volume inspect mydata
+- docker run -dit --name mycontainer -v mydata:/app/data ubuntu
+- docker exec -it mycontainer ls /app/data
+- docker inspect mycontainer
+- docker rm -f mycontainer
+- docker volume rm mydata
+- docker volume prune
+
+
+Question ->
+- Create a Docker volume named projectdata.
+- Verify that the volume has been created successfully.
+- Inspect the volume and identify:The mount point (where Docker stores it on the host system).
+- Run an Ubuntu container in detached mode:
+    Name the container project_container.
+- Attach the volume     projectdata inside the container at /app/data.
+- Inside the running container:Create a file named report.txt inside /app/data.
+- Add the text: This is my first volume.
+- Stop and remove the container.
+- Run a new Ubuntu container:Name it project_container_new.
+- Attach the same volume projectdata at /app/data.
+- Verify that report.txt still exists and contains the same data.
+
+Commands ->
+- docker volume ls
+- docker volume create projectdata
+- docker volume inspect projectdata
+- docker run -dit --name project_container -v projectdata:/app/data ubuntu
+- docker exec -it project_container sh -c "echo This is my first volume' > /app/data/report.txt“
+- docker exec -it project_container cat /app/data/report.txt
+- docker stop project_container
+- docker rm project_container
+- docker run -dit --name project_container_new -v projectdata:/app/data ubuntu
+- docker exec -it project_container_new ls /app/data
+- docker exec -it project_container_new cat /app/data/report.txt
+
+Task 1 ->
+You are a DevOps engineer at a university. The web development team has built a simple HTML-based portal and wants it deployed using Docker.
+
+- Use the official httpd image.
+- Name the container college_portal.
+- Run it in detached mode.
+- Expose container port 80 to host port 8080.
+- Set environment variable ENV=production.
+- Attach a Docker volume named portaldata to store website files.
+- Modify the index.html file inside the container.
+- Verify the output in the browser.
+- Check logs if the page is not loading.
+- Stop and remove the container.
+- Remove the volume and image after testing.
+
+Commands ->
+- docker pull httpd
+- docker volume create portaldata
+- docker run -dit --name college_portal -p 8080:80 -e ENV=production -v portaldata:/usr/local/apache2/htdocs httpd
+- docker exec -it college_portal bash -c "echo '<h1>Welcome to University Portal - Production Mode</h1>' > /usr/local/apache2/htdocs/index.html“
+- curl http://localhost:8080
+- docker logs college_portal
+- docker logs -f college_portal
+- docker stop college_portal
+- docker rm college_portal
+- docker volume rm portaldata
+- docker rmi httpd
+
+Task 2 ->
+Your backend team reports that their MySQL container is failing to start.
+
+- Use mysql:8 image.
+- Set required environment variables:
+    - MYSQL_ROOT_PASSWORD
+    - MYSQL_DATABASE
+    - MYSQL_USER
+    - MYSQL_PASSWORD
+- Run in background.
+- Expose port 3306 to host port 3307.
+- Check logs to identify errors.
+- Enter inside container to verify database.
+- Stop and remove container after debugging.
+
+Commands ->
+- docker pull mysql:8
+- docker run -d --name mysql_debug -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=college -e MYSQL_USER=admin -e MYSQL_PASSWORD=admin123 mysql:8
+- docker ps
+- docker logs mysql_debug
+- docker logs -f mysql_debug
+- docker exec -it mysql_debug bash
+- mysql -u root –p // # (Enter password: root123)
+- exit
+- Exit
+- docker stop mysql_debug
+- docker rm mysql_debug

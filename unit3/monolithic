@@ -1,0 +1,4 @@
+monoliathic syetm is a traditional architecture of building system in which the entire application is binded in a single packet and is developed where as microservices provides us wit a modular way of develioping system in which the entire application is divided into modules and is developed parellely 
+
+major advantage of microservices over monolithic is that it helps in scalablity as if a particular module needs more resources so we will be adding more resources to that particular module only instead of scalign the entire application system ,also it helps in error detection as we can easily find which module has the error and also if there is any error then only a partiular module is affected and the reast of the system works fune instead of damagin the entire system 
+

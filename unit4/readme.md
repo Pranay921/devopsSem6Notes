@@ -1,478 +1,61 @@
-Introduction to Maven
+CONTINUOUS INTEGRATION (CI) WITH GITHUB ACTIONS
 
-Maven is a powerful build automation and project management tool developed by Apache. It is primarily used for Java applications and helps developers manage project dependencies, automate builds, run tests, package applications, and deploy software in a standardized manner.
+GitHub Actions is GitHub's built-in CI/CD platform used to automate software development workflows. It helps developers automatically build, test, package, and deploy applications whenever changes occur in a repository.
 
-The main philosophy behind Maven is "Convention over Configuration", meaning developers follow a predefined project structure instead of manually configuring every aspect of the project.
+Workflow automation means executing tasks automatically instead of manually. When code is pushed to GitHub, workflows can automatically start building applications, running tests, creating Docker images, and deploying software.
 
-Why Build Tools Exist
+All workflow files are stored inside the .github/workflows directory and are written in YAML format. A repository may contain multiple workflow files for different purposes.
 
-As software projects grow, managing them manually becomes difficult. A project may contain hundreds of source files, external libraries, test cases, configuration files, and deployment scripts.
+The main components of GitHub Actions are Workflows, Jobs, Steps, Actions, and Runners.
 
-Without a build tool, developers would need to:
+A Workflow is the complete automation process.
 
-Compile source code manually
-Download and manage dependencies manually
-Execute tests manually
-Package applications manually
-Deploy applications manually
+A Job is a group of related tasks executed on the same runner.
 
-Build tools automate these repetitive tasks, improve consistency, and reduce human errors.
+A Step is an individual operation within a job.
 
-Problems Solved by Automated Builds
+An Action is a reusable piece of code that performs a specific task.
 
-Automated build systems solve several challenges:
+A Runner is the machine that executes workflow jobs.
 
-Dependency Management
+GitHub Actions workflows start using triggers. Common triggers include Push, Pull Request, Schedule, and Manual Workflow Dispatch.
 
-Applications often depend on external libraries. Maven automatically downloads and manages these dependencies.
+Push Trigger starts workflows whenever code is pushed to a repository.
 
-Build Consistency
+Pull Request Trigger executes workflows whenever a pull request is created, updated, or merged.
 
-Every developer and server uses the same build process, eliminating "works on my machine" problems.
+Schedule Trigger runs workflows automatically at predefined times using cron expressions.
 
-Faster Development
+Manual Trigger allows users to start workflows whenever required.
 
-Developers focus on writing code instead of managing build processes.
+GitHub Actions supports Matrix Strategies, which allow the same job to run with multiple configurations such as different operating systems or programming language versions. This helps ensure application compatibility across environments.
 
-Reproducible Builds
+Steps can execute shell commands directly. These commands are commonly used for dependency installation, code compilation, testing, packaging, and deployment operations.
 
-Projects can be built consistently on any machine using the same configuration.
+GitHub Marketplace provides thousands of reusable Actions that simplify workflow creation. Developers can use existing actions instead of writing automation scripts from scratch.
 
-Continuous Integration Support
+Language-specific actions are available for Java, Python, Node.js, .NET, Go, and many other technologies. These actions automatically configure the required development environment.
 
-Automated builds integrate easily with Jenkins, GitHub Actions, GitLab CI/CD, and other CI/CD tools.
+Caching is used to store dependencies between workflow executions. Maven, Gradle, npm, and pip dependencies can be cached to reduce download time and improve build performance.
 
-Project Object Model (POM)
+Multi-job workflows divide the CI/CD process into separate jobs such as Build, Test, Package, and Deploy. Jobs can run sequentially or in parallel depending on requirements.
 
-The Project Object Model (POM) is the core concept of Maven.
+GitHub Actions can deploy applications automatically to servers, virtual machines, Kubernetes clusters, and cloud platforms such as AWS, Azure, Google Cloud, Render, and Railway.
 
-Every Maven project contains a file called:
+GitHub-hosted runners are managed by GitHub and support Ubuntu, Windows, and macOS. They require no infrastructure management and are suitable for most projects.
 
-pom.xml
+Self-hosted runners are managed by organizations themselves. These runners provide complete control over hardware, software, security, and network access.
 
-The POM file contains:
+Runner security is important because runners execute source code. Security practices include protecting secrets, restricting permissions, updating runners regularly, monitoring activity, and isolating execution environments.
 
-Project information
-Dependencies
-Build configuration
-Plugins
-Repository information
-Project version details
+GitHub Actions integrates seamlessly with Docker. It can automatically build Docker images whenever code changes are pushed to a repository.
 
-It acts as the blueprint of the entire project.
+After building images, GitHub Actions can publish them to Docker Hub for centralized storage and distribution.
 
-Maven Directory Structure
+GitHub Actions can also push images to GitHub Container Registry (GHCR), allowing source code and container images to remain within the GitHub ecosystem.
 
-Maven follows a standard directory layout.
+A typical GitHub Actions workflow follows this sequence:
 
-The standard structure separates:
+Developer writes code → Pushes code to GitHub → Workflow Triggered → Runner Allocated → Source Code Checkout → Dependency Installation → Build Process → Test Execution → Artifact Generation → Docker Image Creation → Push Image to Docker Hub/GHCR → Deploy to Server or Cloud → Application Available to Users.
 
-Production code
-Test code
-Resources
-Build outputs
-
-Benefits include:
-
-Consistency across projects
-Easier maintenance
-Better collaboration among developers
-Compatibility with Maven plugins
-
-The build output is stored in the target directory.
-
-Maven Build Lifecycle
-
-A lifecycle is a sequence of phases executed in a specific order.
-
-Maven provides three built-in lifecycles:
-
-Default Lifecycle
-
-Handles project deployment.
-
-Clean Lifecycle
-
-Removes previously generated files.
-
-Site Lifecycle
-
-Generates project documentation.
-
-The Default Lifecycle is the most commonly used.
-
-Validate Phase
-
-The validate phase checks whether the project structure and configuration are correct.
-
-It verifies:
-
-Project directory structure
-POM syntax
-Required information
-
-This is the first phase in the build process.
-
-Compile Phase
-
-The compile phase converts Java source files into bytecode (.class files).
-
-It compiles the code present in:
-
-src/main/java
-
-The generated class files are stored inside:
-
-target/classes
-Test Phase
-
-The test phase executes unit tests.
-
-Its purpose is to verify that the application behaves correctly before packaging.
-
-Common testing frameworks:
-
-JUnit
-TestNG
-Mockito
-
-If any test fails, the build process stops.
-
-Package Phase
-
-The package phase bundles compiled code into a distributable format.
-
-Common package types include:
-
-JAR (Java Archive)
-
-Used for standalone Java applications.
-
-WAR (Web Archive)
-
-Used for web applications deployed on servers like Tomcat.
-
-The generated package is stored in the target directory.
-
-Verify Phase
-
-The verify phase performs additional quality checks.
-
-Examples include:
-
-Integration testing
-Code quality analysis
-Security checks
-
-Its goal is to ensure the packaged application is valid and ready for deployment.
-
-Install Phase
-
-The install phase copies the packaged artifact into the local Maven repository.
-
-The local repository is usually located in:
-
-.m2/repository
-
-This allows other local projects to use the artifact as a dependency.
-
-Deploy Phase
-
-The deploy phase publishes artifacts to a remote repository.
-
-Remote repositories may include:
-
-Nexus Repository
-JFrog Artifactory
-GitHub Packages
-
-This phase is commonly used in CI/CD pipelines.
-
-Parent POM
-
-Large applications often consist of multiple modules.
-
-A Parent POM provides centralized configuration for all child projects.
-
-Benefits:
-
-Shared dependency versions
-Shared plugins
-Common build configurations
-Reduced duplication
-
-Child projects inherit settings from the Parent POM.
-
-Dependency Management
-
-A dependency is an external library required by the application.
-
-Examples:
-
-Spring Boot
-Hibernate
-MySQL Driver
-JUnit
-
-Maven automatically downloads dependencies from repositories and manages them.
-
-This eliminates the need to manually store JAR files inside the project.
-
-Dependency Scope
-
-Dependency scope defines when a dependency is available.
-
-Compile Scope
-
-Available during compilation, testing, and runtime.
-
-Most application dependencies use compile scope.
-
-Test Scope
-
-Available only during testing.
-
-Example:
-
-JUnit
-
-Runtime Scope
-
-Required only while running the application.
-
-Example:
-
-Database drivers.
-
-Provided Scope
-
-Expected to be supplied by the runtime environment.
-
-Example:
-
-Servlet API provided by Tomcat.
-
-System Scope
-
-Dependency is provided through a local file path.
-
-Rarely used.
-
-Transitive Dependencies
-
-Dependencies may depend on other dependencies.
-
-When Maven downloads a dependency, it also downloads the libraries required by that dependency.
-
-This process is called Transitive Dependency Resolution.
-
-For example:
-
-Spring Boot depends on multiple internal libraries.
-
-When Spring Boot is added, Maven automatically downloads all required libraries.
-
-Version Conflicts and Resolution
-
-Version conflicts occur when different libraries require different versions of the same dependency.
-
-Example:
-
-Library A requires Log4j 1.x.
-
-Library B requires Log4j 2.x.
-
-Maven resolves conflicts using the "Nearest Definition Wins" strategy.
-
-The dependency closest to the project in the dependency tree is selected.
-
-Developers can also manually specify the desired version.
-
-Dependency Management Section
-
-The dependencyManagement section centralizes dependency versions.
-
-Advantages:
-
-Consistent versions across projects
-Easier upgrades
-Simplified maintenance
-
-Child projects inherit versions from the parent configuration.
-
-Maven Plugins
-
-Plugins extend Maven functionality.
-
-Maven itself performs only basic tasks.
-
-Most operations are actually performed through plugins.
-
-Examples:
-
-Compilation
-Testing
-Packaging
-Docker image creation
-Code analysis
-Maven Compiler Plugin
-
-The Compiler Plugin is responsible for compiling Java source code.
-
-Functions:
-
-Compiles Java classes
-Sets Java version
-Generates bytecode
-
-It ensures source code is compatible with the specified Java version.
-
-Maven Surefire Plugin
-
-The Surefire Plugin executes unit tests.
-
-Functions:
-
-Runs JUnit tests
-Runs TestNG tests
-Generates test reports
-
-This plugin is automatically executed during the test phase.
-
-Maven Shade Plugin
-
-The Shade Plugin creates an Uber JAR (Fat JAR).
-
-A normal JAR contains only application classes.
-
-An Uber JAR contains:
-
-Application code
-Dependencies
-Resources
-
-Benefits:
-
-Simplified deployment
-Single executable file
-Easier distribution
-Maven Wrapper (mvnw)
-
-Different developers may have different Maven versions installed.
-
-The Maven Wrapper solves this issue.
-
-Benefits:
-
-Ensures the same Maven version for all developers
-Eliminates manual Maven installation
-Improves build consistency
-
-Projects using Maven Wrapper include wrapper scripts inside the repository.
-
-Maven and Docker Integration
-
-Modern applications are commonly deployed using containers.
-
-Maven can integrate directly with Docker.
-
-Workflow:
-
-Build application
-Generate artifact
-Build Docker image
-Push image to registry
-
-This enables complete automation of application packaging and deployment.
-
-dockerfile-maven-plugin
-
-The dockerfile-maven-plugin allows Docker image creation directly from Maven.
-
-Features:
-
-Builds Docker images
-Tags images
-Pushes images
-Integrates with CI/CD pipelines
-
-It eliminates the need to execute Docker commands separately.
-
-Dockerizing Maven-Based Applications
-
-Dockerizing a Maven application involves packaging the application and placing it inside a Docker container.
-
-Benefits:
-
-Portability
-
-Runs consistently across environments.
-
-Scalability
-
-Containers can be replicated easily.
-
-Isolation
-
-Applications run independently.
-
-Cloud Compatibility
-
-Suitable for Kubernetes and cloud deployments.
-
-Pushing Artifacts to Registries
-
-After building software, artifacts are stored in registries.
-
-Artifacts include:
-
-JAR files
-WAR files
-Docker images
-Maven Artifact Registries
-
-Used to store Java artifacts.
-
-Examples:
-
-Nexus Repository
-Artifactory
-GitHub Packages
-
-Purpose:
-
-Version control
-Centralized storage
-Team sharing
-Docker Registries
-
-Used to store Docker images.
-
-Examples:
-
-Docker Hub
-GitHub Container Registry (GHCR)
-Amazon Elastic Container Registry (ECR)
-Azure Container Registry (ACR)
-Google Container Registry (GCR)
-
-Purpose:
-
-Image distribution
-Deployment automation
-CI/CD integration
-Complete Maven Workflow
-
-A typical Maven-based development workflow follows these stages:
-
-Developer writes code.
-Maven validates project structure.
-Source code is compiled.
-Unit tests are executed.
-Application is packaged.
-Additional verification is performed.
-Artifact is installed in the local repository.
-Artifact is deployed to a remote repository.
-Docker image is built.
-Docker image is pushed to a registry.
-Application is deployed to production.
+GitHub Actions improves software quality, reduces manual effort, accelerates delivery, supports modern DevOps practices, and enables efficient Continuous Integration and Continuous Deployment pipelines.
